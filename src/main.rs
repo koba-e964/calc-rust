@@ -5,35 +5,47 @@
 // AST
 #[derive(PartialEq, Clone, Debug)]
 pub enum AST {
-    Number(i64),
+    Num(i64),
+    Str(String),
+    Var(String),
     Sum(Box<AST>, Box<AST>),
     Prod(Box<AST>, Box<AST>),
+    LetEx(String, Box<AST>, Box<AST>),
 }
 
-use arithmetic::expression;
+use arithmetic::exp;
 
 peg! arithmetic(r#"
 use AST;
-use AST::Sum;
-use AST::Prod;
-use AST::Number;
 
 #[pub]
-expression -> AST
-	= sum
+exp -> AST
+	= letex
+        / sum
+letex -> AST
+        = "let" space+ x:var space* "=" space* e1:exp space+ "in" space+ e2:exp
+           { AST::LetEx(x, Box::new(e1), Box::new(e2)) }
 sum -> AST
-	= l:product "+" r:product { Sum(Box::new(l), Box::new(r)) }
+	= l:product space* "+" space* r:sum { AST::Sum(Box::new(l), Box::new(r)) }
 	/ product
 product -> AST
-	= l:atom "*" r:atom { Prod(Box::new(l), Box::new(r)) }
+	= l:atom space* "*" space* r:product { AST::Prod(Box::new(l), Box::new(r)) }
 	/ atom
 atom -> AST
 	= number
-	/ "(" v:sum ")" { v }
+        / str
+        / v:var { AST::Var(v) }
+	/ "(" space* v:exp space* ")" { v }
 number -> AST
-	= [0-9]+ { Number(match_str.parse().unwrap()) }
+	= [0-9]+ { AST::Num(match_str.parse().unwrap()) }
+str -> AST
+        = "\"" "\"" { AST::Str("".to_string())}
+space -> ()
+        = " "
+var -> String
+        = [a-zA-Z]+ { match_str.to_string() }
 "#);
 
 fn main() {
-    println!("{:?}", expression("1+2*3"));
+    println!("{:?}", exp("let x = 4 in x + 2"));
 }
