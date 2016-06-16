@@ -47,6 +47,8 @@ peg! arithmetic(r#"
 use parse::*;
 
 #[pub]
+top_exp -> AST
+        = space* e:exp space* { e }
 exp -> AST
 	= letex
         / add_ast
@@ -79,10 +81,18 @@ number -> AST
 str -> AST
         = "\"" "\"" { AST::Str("".to_string())}
 space -> ()
-        = " "
+        = " " / "\n" / "\r"
 var -> String
         = [a-zA-Z]+ { match_str.to_string() }
 "#);
+
+
+pub fn parse(s: &str) -> AST {
+    match arithmetic::top_exp(s) {
+        Ok(ast) => ast,
+        Err(err) => { println!("{:?}", err); panic!(err) }
+    }
+}
 
 #[cfg(test)]
 mod tests {
