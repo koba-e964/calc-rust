@@ -97,14 +97,13 @@ pub fn parse(s: &str) -> AST {
 #[cfg(test)]
 mod tests {
     use parse::*;
-    use parse::arithmetic::*;
     #[test]
     fn parse_test() {
-        assert_eq!(exp("4 -2"), Ok(AST::AddNode(AddOp::Sub, Box::new(AST::Num(4)), Box::new(AST::Num(2)))));
-        assert_eq!(exp("let x = 4 in x + y * 2"), Ok(
+        assert_eq!(parse("4 -2"), AST::AddNode(AddOp::Sub, Box::new(AST::Num(4)), Box::new(AST::Num(2))));
+        assert_eq!(parse("let x = 4 in x + y * 2"),
             AST::LetEx("x".to_string(), Box::new(AST::Num(4)),
                        Box::new(AST::AddNode(AddOp::Add, Box::new(AST::Var("x".to_string())),
                                     Box::new(AST::MulNode(MulOp::Mul, Box::new(AST::Var("y".to_string())), Box::new(AST::Num(2)))))))
-        ));
+        );
     }
 }

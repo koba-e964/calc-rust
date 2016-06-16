@@ -5,7 +5,7 @@ use calc::parse;
 
 fn main() {
     print!("> ");
-    io::stdout().flush();
+    io::stdout().flush().ok().unwrap();
     let mut s: String = "".to_string();
     match io::stdin().read_line(&mut s) {
         Ok(_) => {}
