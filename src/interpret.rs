@@ -34,5 +34,21 @@ pub fn f(ast: &AST) -> Value {
 
 #[cfg(test)]
 mod tests {
-    
+    use parse;
+    use interpret;
+    use ast::{AST, AddOp, MulOp, Value};
+    #[test]
+    fn operations_test() {
+        let ast1 = AST::AddNode(AddOp::Sub, Box::new(AST::Num(7)), Box::new(AST::Num(4)));
+        assert_eq!(interpret::f(&ast1), Value::VNum(3));
+        let ast2 = AST::MulNode(MulOp::Div, Box::new(AST::Num(20)), Box::new(AST::Num(4)));
+        assert_eq!(interpret::f(&ast2), Value::VNum(5));
+    }
+    #[test]
+    fn letex_test() {
+        let ast1 = parse::parse("let x = 4 in x + x");
+        assert_eq!(interpret::f(&ast1), Value::VNum(8));
+        let ast2 = parse::parse("let x = 4 in let x = 3 in x + x");
+        assert_eq!(interpret::f(&ast2), Value::VNum(6));
+    }
 }
