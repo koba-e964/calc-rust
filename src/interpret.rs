@@ -1,36 +1,49 @@
 use ast::{AST, Value, AddOp, MulOp};
+use std::collections::HashMap;
 
-pub fn f(ast: &AST) -> Value {
+fn f_sub(ast: &AST, env: &mut HashMap<String, Value>) -> Value {
     match *ast {
         AST::Num(i) => Value::VNum(i),
         AST::Str(ref str) => Value::VStr(str.clone()),
         AST::AddNode(AddOp::Add, ref e1, ref e2) =>
-            match (f(e1), f(e2)) {
+            match (f_sub(e1, env), f_sub(e2, env)) {
                 (Value::VNum(i1), Value::VNum(i2)) => Value::VNum(i1 + i2),
                 (Value::VStr(s1), Value::VStr(s2)) => { let mut s = s1.to_string(); s.push_str(&s2); Value::VStr(s)},
                 _ => panic!("+ failed"),
             },
         AST::AddNode(AddOp::Sub, ref e1, ref e2) =>
-            match (f(e1), f(e2)) {
+            match (f_sub(e1, env), f_sub(e2, env)) {
                 (Value::VNum(i1), Value::VNum(i2)) => Value::VNum(i1 - i2),
                 _ => panic!("- failed"),
             },
 
         AST::MulNode(MulOp::Mul, ref e1, ref e2) =>
-            match (f(e1), f(e2)) {
+            match (f_sub(e1, env), f_sub(e2, env)) {
                 (Value::VNum(i1), Value::VNum(i2)) => Value::VNum(i1 * i2),
                 _ => panic!("* failed"),
             },
         AST::MulNode(MulOp::Div, ref e1, ref e2) =>
-            match (f(e1), f(e2)) {
+            match (f_sub(e1, env), f_sub(e2, env)) {
                 (Value::VNum(i1), Value::VNum(i2)) => Value::VNum(i1 / i2),
                 _ => panic!("/ failed"),
             },
-        AST::Var(_) => panic!(),
-        AST::LetEx(_, _, _) => panic!(),
+        AST::Var(ref x) => env.get(x).unwrap().clone(),
+        AST::LetEx(ref x, ref e1, ref e2) => {
+            let v1 = f_sub(e1, env);
+            let old = env.insert(x.clone(), v1);
+            let v2 = f_sub(e2, env);
+            env.remove(x).unwrap();
+            if let Some(o) = old {
+                env.insert(x.clone(), o);
+            }
+            v2
+        }
     }
 }
 
+pub fn f(ast: &AST) -> Value {
+    f_sub(ast, &mut HashMap::new())
+}
 
 #[cfg(test)]
 mod tests {
@@ -50,5 +63,7 @@ mod tests {
         assert_eq!(interpret::f(&ast1), Value::VNum(8));
         let ast2 = parse::parse("let x = 4 in let x = 3 in x + x");
         assert_eq!(interpret::f(&ast2), Value::VNum(6));
+        let ast3 = parse::parse("let x = 4 in (let x = 3 in x) + x");
+        assert_eq!(interpret::f(&ast3), Value::VNum(7));
     }
 }
