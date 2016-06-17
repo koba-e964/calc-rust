@@ -4,25 +4,7 @@
  */
 
 
-// AST
-#[derive(PartialEq, Clone, Debug)]
-pub enum AST {
-    Num(i64),
-    Str(String),
-    Var(String),
-    AddNode(AddOp, Box<AST>, Box<AST>),
-    MulNode(MulOp, Box<AST>, Box<AST>),
-    LetEx(String, Box<AST>, Box<AST>),
-}
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum AddOp {
-    Add, Sub,
-}
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum MulOp {
-    Mul, Div,
-}
-
+use ast::AST;
 
 
 /*
@@ -44,6 +26,7 @@ where F: Fn(T, AST, AST) -> AST, T: Copy {
 }
 
 peg! arithmetic(r#"
+use ast::*;
 use parse::*;
 
 #[pub]
@@ -97,6 +80,7 @@ pub fn parse(s: &str) -> AST {
 #[cfg(test)]
 mod tests {
     use parse::*;
+    use ast::*;
     #[test]
     fn parse_test() {
         assert_eq!(parse("4 -2"), AST::AddNode(AddOp::Sub, Box::new(AST::Num(4)), Box::new(AST::Num(2))));
