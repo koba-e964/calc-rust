@@ -62,7 +62,9 @@ atom -> AST
 number -> AST
 	= [0-9]+ { AST::Num(match_str.parse().unwrap()) }
 str -> AST
-        = "\"" "\"" { AST::Str("".to_string())}
+        = "\"" s:str_internal "\"" { AST::Str(s) }
+str_internal -> String
+        = [^\"]* { match_str.to_string() }
 space -> ()
         = " " / "\n" / "\r"
 var -> String
