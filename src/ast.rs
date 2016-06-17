@@ -16,3 +16,9 @@ pub enum AddOp {
 pub enum MulOp {
     Mul, Div,
 }
+
+#[derive(PartialEq, Clone, Debug)]
+pub enum Value {
+    VNum(i64),
+    VStr(String),
+}

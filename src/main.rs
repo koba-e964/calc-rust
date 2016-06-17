@@ -2,6 +2,7 @@ extern crate calc;
 use std::io;
 use std::io::Write;
 use calc::parse;
+use calc::interpret;
 
 fn main() {
     print!("> ");
@@ -13,4 +14,6 @@ fn main() {
     }
     let ast = parse::parse(&s);
     println!("{:?}", ast);
+    let result = interpret::f(&ast);
+    println!("result = {:?}", result);
 }
