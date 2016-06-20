@@ -5,7 +5,10 @@ fn f_sub(ast: &AST, env: &mut HashMap<String, Type>) -> TypedAST {
     match *ast {
         AST::Num(n) => TypedAST::Num(n),
         AST::Str(ref str) => TypedAST::Str(str.clone()),
-        AST::Var(ref x) => panic!("typing::f: typing var"),
+        AST::Var(ref x) => {
+            let ty = env.get(x).unwrap().clone();
+            TypedAST::Var(x.clone(), ty)
+        },
         AST::OpNode(op, ref e1, ref e2) => {
             let ta1 = f_sub(e1, env);
             let ta2 = f_sub(e2, env);
@@ -17,7 +20,17 @@ fn f_sub(ast: &AST, env: &mut HashMap<String, Type>) -> TypedAST {
                 _ => panic!("typing of {:?} failed", op),
             }
         },
-        AST::LetEx(_, _, _) => panic!("typing::f: typing let expression"),
+        AST::LetEx(ref x, ref e1, ref e2) => {
+            let ast1 = f_sub(e1, env);
+            let ty1 = ty_of_ast(&ast1);
+            let old = env.insert(x.clone(), ty1.clone());
+            let ast2 = f_sub(e2, env);
+            env.remove(x).unwrap();
+            if let Some(o) = old {
+                env.insert(x.clone(), o);
+            }
+            TypedAST::LetEx(x.clone(), ty1, Box::new(ast1), Box::new(ast2))
+        },
     }
 }
 

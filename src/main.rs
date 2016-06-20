@@ -15,7 +15,6 @@ fn main() {
     }
     let ast = parse::parse(&s);
     println!("{:?}", ast);
-    let result = interpret::f(&ast);
-    println!("result = {:?}", result);
     println!("typing: {:?}", typing::f(&ast));
+    println!("result = {:?}", interpret::f(&ast));
 }
