@@ -3,6 +3,7 @@ use std::io;
 use std::io::Write;
 use calc::parse;
 use calc::interpret;
+use calc::typing;
 
 fn main() {
     print!("> ");
@@ -16,4 +17,5 @@ fn main() {
     println!("{:?}", ast);
     let result = interpret::f(&ast);
     println!("result = {:?}", result);
+    println!("typing: {:?}", typing::f(&ast));
 }

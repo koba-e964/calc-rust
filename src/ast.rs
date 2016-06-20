@@ -37,7 +37,7 @@ pub enum TypedAST {
     LetEx(String, Type, Box<TypedAST>, Box<TypedAST>),
 }
 
-fn ty_of_ast(tast: &TypedAST) -> Type {
+pub fn ty_of_ast(tast: &TypedAST) -> Type {
     match *tast {
         TypedAST::Num(_) => Type::Int,
         TypedAST::Str(_) => Type::Str,
