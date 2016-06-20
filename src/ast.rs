@@ -4,16 +4,12 @@ pub enum AST {
     Num(i64),
     Str(String),
     Var(String),
-    AddNode(AddOp, Box<AST>, Box<AST>),
-    MulNode(MulOp, Box<AST>, Box<AST>),
+    OpNode(Op, Box<AST>, Box<AST>),
     LetEx(String, Box<AST>, Box<AST>),
 }
 #[derive(PartialEq, Clone, Copy, Debug)]
-pub enum AddOp {
+pub enum Op {
     Add, Sub,
-}
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum MulOp {
     Mul, Div,
 }
 
@@ -37,8 +33,7 @@ pub enum TypedAST {
     Num(i64),
     Str(String),
     Var(String, Type),
-    AddNode(AddOp, Type, Box<TypedAST>, Box<TypedAST>),
-    MulNode(MulOp, Type, Box<TypedAST>, Box<TypedAST>),
+    OpNode(Op, Type, Box<TypedAST>, Box<TypedAST>),
     LetEx(String, Type, Box<TypedAST>, Box<TypedAST>),
 }
 
@@ -47,8 +42,7 @@ fn ty_of_ast(tast: &TypedAST) -> Type {
         TypedAST::Num(_) => Type::Int,
         TypedAST::Str(_) => Type::Str,
         TypedAST::Var(_, ref ty) => ty.clone(),
-        TypedAST::AddNode(_, ref ty, _, _) => ty.clone(),
-        TypedAST::MulNode(_, ref ty, _, _) => ty.clone(),
+        TypedAST::OpNode(_, ref ty, _, _) => ty.clone(),
         TypedAST::LetEx(_, ref ty, _, _) => ty.clone(),
     }
 }
