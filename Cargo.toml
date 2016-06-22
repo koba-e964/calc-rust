@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["koba-e964 <koba_max@kobas-Air.pohe>"]
 
 [dependencies]
-peg = "0.3.0"
+peg = "0.3.13"
 
 [[bin]]
 name = "calc-rust"

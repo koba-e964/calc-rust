@@ -1,6 +1,5 @@
 # CalcRust [![Build Status](https://travis-ci.org/koba-e964/calc-rust.svg?branch=master)](https://travis-ci.org/koba-e964/calc-rust)
 
-**Waiting for the merge of [kevinmehall/rust-peg:#134](https://github.com/kevinmehall/rust-peg/pull/134) to `rust-peg`.** It doesn't work with the latest nightly (`rustc 1.11.0-nightly (5522e678b 2016-06-20)`).
 
 This is a toy example of a calculator in Rust, using [`rust-peg`](https://github.com/kevinmehall/rust-peg).
 
