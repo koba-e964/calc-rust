@@ -5,6 +5,9 @@ authors = ["koba-e964 <koba_max@kobas-Air.pohe>"]
 
 [dependencies]
 peg = "0.3.13"
+rustc-serialize = "0.3"
+docopt = "0.6.81"
+docopt_macros = "0.6.84"
 
 [[bin]]
 name = "calc-rust"
