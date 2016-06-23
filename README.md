@@ -19,7 +19,16 @@ To run the interpreter, run
 ```
 cargo run
 ```
-in the root directory of this project. The output will be like:
+in the root directory of this project.
+
+The usage is
+```
+Usage: calc-rust [options] [INPUT]
+
+Options:
+    -v, --verbose  Verbose mode
+```
+and described in `src/main.rs`. The output will be like:
 ```
 $ cargo run
      Running `target/debug/calc-rust`
@@ -40,4 +49,9 @@ LetEx("x", Num(4), OpNode(Add, Var("x"), Str("33")))
 thread 'main' panicked at 'typing of Add failed', src/typing.rs:20
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 error: Process didn't exit successfully: `target/debug/calc-rust` (exit code: 101)
+$ cargo run -- sample/add.txt
+     Running `target/debug/calc-rust sample/add.txt`
+> OpNode(Add, OpNode(Add, Num(2), Num(3)), Num(4))
+typing: OpNode(Add, Int, OpNode(Add, Int, Num(2), Num(3)), Num(4))
+result = VNum(9)
 ```
