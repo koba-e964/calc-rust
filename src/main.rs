@@ -6,7 +6,8 @@ extern crate rustc_serialize;
 extern crate docopt;
 
 use std::io;
-use std::io::Write;
+use std::io::{Read,Write};
+use std::fs::File;
 use calc::parse;
 use calc::interpret;
 use calc::typing;
@@ -25,13 +26,18 @@ fn main() {
     if args.flag_verbose {
         println!("verbose mode");
     }
-    println!("input file: {}", args.arg_INPUT);
     print!("> ");
     io::stdout().flush().ok().unwrap();
     let mut s: String = "".to_string();
-    match io::stdin().read_line(&mut s) {
-        Ok(_) => {}
-        Err(err) => { panic!(err); }
+    if args.arg_INPUT == "".to_string() { // Reads from stdin
+        match io::stdin().read_line(&mut s) {
+            Ok(_) => {}
+            Err(err) => { panic!(err); }
+        }
+    } else { // Reads from file
+        let mut fp = File::open(args.arg_INPUT)
+            .unwrap_or_else(|e| panic!(e));
+        fp.read_to_string(&mut s);
     }
     let ast = parse::parse(&s);
     println!("{:?}", ast);
