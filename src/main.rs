@@ -12,12 +12,15 @@ use calc::parse;
 use calc::interpret;
 use calc::typing;
 
-docopt!(Args, "
+const USAGE: &'static str = "
 Usage: calc-rust [options] [INPUT]
 
 Options:
     -v, --verbose  Verbose mode
-");
+    -t, --typing   Check types
+";
+
+docopt!(Args, USAGE);
 
 fn main() {
     let args: Args = Args::docopt()
@@ -37,11 +40,13 @@ fn main() {
     } else { // Reads from file
         let mut fp = File::open(args.arg_INPUT)
             .unwrap_or_else(|e| panic!(e));
-        fp.read_to_string(&mut s);
+        fp.read_to_string(&mut s).unwrap_or_else(|e| panic!(e));
     }
     let (fundecs, ast) = parse::parse(&s);
     println!("fundecs: {:?}", fundecs);
     println!("{:?}", ast);
-    println!("typing: {:?}", typing::f(&ast));
+    if args.flag_typing {
+        println!("typing: {:?}", typing::f(&ast));
+    }
     println!("result = {:?}", interpret::f(&ast));
 }
