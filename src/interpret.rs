@@ -38,6 +38,7 @@ fn f_sub(ast: &AST, env: &mut HashMap<String, Value>) -> Value {
             }
             v2
         }
+        AST::FunApp(ref f, ref es) => panic!("eval_funapp"),
     }
 }
 

@@ -33,7 +33,7 @@ mulop -> Op
 atom -> AST
 	= number
         / str
-	/ v:ident space* "(" space* e:exp space* ")" { e }
+	/ v:ident space* "(" space* e:exp space* ")" { AST::FunApp(v, vec![e]) }
         / v:ident { AST::Var(v) }
 	/ "(" space* v:exp space* ")" { v }
 number -> AST

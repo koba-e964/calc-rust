@@ -31,6 +31,7 @@ fn f_sub(ast: &AST, env: &mut HashMap<String, Type>) -> TypedAST {
             }
             TypedAST::LetEx(x.clone(), ty1, Box::new(ast1), Box::new(ast2))
         },
+        AST::FunApp(ref f, ref es) => panic!("typing_funapp"),
     }
 }
 
