@@ -39,7 +39,8 @@ fn main() {
             .unwrap_or_else(|e| panic!(e));
         fp.read_to_string(&mut s);
     }
-    let ast = parse::parse(&s);
+    let (fundecs, ast) = parse::parse(&s);
+    println!("fundecs: {:?}", fundecs);
     println!("{:?}", ast);
     println!("typing: {:?}", typing::f(&ast));
     println!("result = {:?}", interpret::f(&ast));

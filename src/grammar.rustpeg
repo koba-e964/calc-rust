@@ -2,12 +2,18 @@ use ast::*;
 use parse::*;
 
 #[pub]
-top_exp -> AST
-        = space* fundec* space* e:exp space* { e }
-fundec -> ()
-        = "def" space* ident space*
-          "(" space* ident space* ":" space* ident space* ")" space*
-          "{" space* exp space* "}"
+top_exp -> (Vec<FunDec>, AST)
+        = space* f:fundec_space* e:exp space* { (f, e) }
+fundec_space -> FunDec
+        = f:fundec space* { f }
+fundec -> FunDec
+        = "def" space+ f:ident space*
+          "(" space* params:params space* ")" space*
+          "{" space* e:exp space* "}" { {let mut t = params; t.reverse(); (f, t, e)} }
+params -> Vec<(String, Type)>
+        = x:ident space* ":" space* ty:type space* "," space* params:params
+          { {let mut t = params; t.push((x, ty)); t} }
+        / x:ident space* ":" space* ty:type { vec![(x, ty)] }
 exp -> AST
 	= letex
         / add_ast
@@ -33,11 +39,15 @@ mulop -> Op
 atom -> AST
 	= number
         / str
-	/ v:ident space* "(" space* e:exp space* ")" { AST::FunApp(v, vec![e]) }
+	/ v:ident space* "(" space* e:args space* ")"
+           { {let mut t = e; t.reverse(); AST::FunApp(v, t)} }
         / v:ident { AST::Var(v) }
 	/ "(" space* v:exp space* ")" { v }
 number -> AST
 	= [0-9]+ { AST::Num(match_str.parse().unwrap()) }
+args -> Vec<AST>
+        = e:exp space* "," space* a:args { {let mut t = a; t.push(e); t} }
+        / e:exp { vec![e] }
 str -> AST
         = "\"" s:str_internal "\"" { AST::Str(s) }
 str_internal -> String
@@ -46,3 +56,6 @@ space -> ()
         = " " / "\n" / "\r"
 ident -> String
         = [a-zA-Z]+ { match_str.to_string() }
+type -> Type
+        = "int" { Type::Int }
+	/ "str" { Type::Str }

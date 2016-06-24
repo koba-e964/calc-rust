@@ -4,7 +4,7 @@
  */
 
 
-use ast::AST;
+use ast::{AST, FunDec};
 
 
 /*
@@ -28,7 +28,7 @@ where F: Fn(T, AST, AST) -> AST, T: Copy {
 peg! arithmetic(include_str!("grammar.rustpeg"));
 
 
-pub fn parse(s: &str) -> AST {
+pub fn parse(s: &str) -> (Vec<FunDec>, AST) {
     match arithmetic::top_exp(s) {
         Ok(ast) => ast,
         Err(err) => { println!("{:?}", err); panic!(err) }

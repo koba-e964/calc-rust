@@ -8,6 +8,9 @@ pub enum AST {
     LetEx(String, Box<AST>, Box<AST>),
     FunApp(String, Vec<AST>),
 }
+
+pub type FunDec = (String, Vec<(String, Type)>, AST);
+
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum Op {
     Add, Sub,

@@ -2,4 +2,8 @@ def id(x: int) {
     x
 }
 
-id(5)
+def subtract(x: int, y: int) {
+    x - y
+}
+
+id(subtract(5, 7))
