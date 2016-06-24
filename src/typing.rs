@@ -20,6 +20,18 @@ fn f_sub(ast: &AST, env: &mut HashMap<String, Type>) -> TypedAST {
                 _ => panic!("typing of {:?} failed", op),
             }
         },
+        AST::IfNode(ref cond, ref e_true, ref e_false) => {
+            let tcond = f_sub(cond, env);
+            if ty_of_ast(&tcond) != Type::Int {
+                panic!("Condition must be of type int.");
+            }
+            let t_true = f_sub(e_true, env);
+            let t_false = f_sub(e_false, env);
+            if ty_of_ast(&t_true) != ty_of_ast(&t_false) {
+                panic!("The types of true part and false part in a condition must be the same.");
+            }
+            TypedAST::IfNode(Box::new(tcond), ty_of_ast(&t_true).clone(), Box::new(t_true), Box::new(t_false))
+        },
         AST::LetEx(ref x, ref e1, ref e2) => {
             let ast1 = f_sub(e1, env);
             let ty1 = ty_of_ast(&ast1);

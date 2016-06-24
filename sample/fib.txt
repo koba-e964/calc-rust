@@ -1,0 +1,8 @@
+def fib(x: int) {
+    if x * (x - 1)
+       then fib(x - 1) + fib(x - 2)
+       else x
+    end
+}
+
+fib(10)

@@ -27,6 +27,12 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Value>) -> Val
                 (Value::VNum(i1), Value::VNum(i2)) => Value::VNum(i1 / i2),
                 _ => panic!("/ failed"),
             },
+        AST::IfNode(ref cond, ref e_true, ref e_false) => 
+            match f_sub(fundecs, cond, env) {
+                Value::VNum(0) => f_sub(fundecs, e_false, env),
+                Value::VNum(_) => f_sub(fundecs, e_true, env),
+                _ => panic!("Condition of if has to be an integer."),
+            },
         AST::Var(ref x) => env.get(x).unwrap().clone(),
         AST::LetEx(ref x, ref e1, ref e2) => {
             let v1 = f_sub(fundecs, e1, env);

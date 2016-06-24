@@ -39,6 +39,9 @@ mulop -> Op
 atom -> AST
 	= number
         / str
+	/ "if" space* cond:exp space* "then" space* e1:exp space*
+	"else" space* e2:exp space* "end"
+	{ AST::IfNode(Box::new(cond), Box::new(e1), Box::new(e2)) }
 	/ v:ident space* "(" space* e:args space* ")"
            { {let mut t = e; t.reverse(); AST::FunApp(v, t)} }
         / v:ident { AST::Var(v) }
@@ -55,7 +58,8 @@ str_internal -> String
 space -> ()
         = " " / "\n" / "\r"
 ident -> String
-        = [a-zA-Z]+ { match_str.to_string() }
+        = !keyword [a-zA-Z]+ { match_str.to_string() }
 type -> Type
         = "int" { Type::Int }
 	/ "str" { Type::Str }
+keyword -> () = "def" / "let" / "in" / "if" / "then" / "else"
