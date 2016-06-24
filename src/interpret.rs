@@ -61,10 +61,10 @@ mod tests {
     #[test]
     fn letex_test() {
         let ast1 = parse::parse("let x = 4 in x + x");
-        assert_eq!(interpret::f(&ast1), Value::VNum(8));
+        assert_eq!(interpret::f(&ast1.1), Value::VNum(8));
         let ast2 = parse::parse("let x = 4 in let x = 3 in x + x");
-        assert_eq!(interpret::f(&ast2), Value::VNum(6));
+        assert_eq!(interpret::f(&ast2.1), Value::VNum(6));
         let ast3 = parse::parse("let x = 4 in (let x = 3 in x) + x");
-        assert_eq!(interpret::f(&ast3), Value::VNum(7));
+        assert_eq!(interpret::f(&ast3.1), Value::VNum(7));
     }
 }

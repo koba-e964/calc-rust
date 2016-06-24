@@ -41,8 +41,8 @@ mod tests {
     use ast::*;
     #[test]
     fn parse_test() {
-        assert_eq!(parse("4 -2"), AST::OpNode(Op::Sub, Box::new(AST::Num(4)), Box::new(AST::Num(2))));
-        assert_eq!(parse("let x = 4 in x + y * 2"),
+        assert_eq!(parse("4 -2").1, AST::OpNode(Op::Sub, Box::new(AST::Num(4)), Box::new(AST::Num(2))));
+        assert_eq!(parse("let x = 4 in x + y * 2").1,
             AST::LetEx("x".to_string(), Box::new(AST::Num(4)),
                        Box::new(AST::OpNode(Op::Add, Box::new(AST::Var("x".to_string())),
                                     Box::new(AST::OpNode(Op::Mul, Box::new(AST::Var("y".to_string())), Box::new(AST::Num(2)))))))
