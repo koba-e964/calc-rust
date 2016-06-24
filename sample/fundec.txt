@@ -1,0 +1,5 @@
+def id(x: int) {
+    x
+}
+
+id(5)
