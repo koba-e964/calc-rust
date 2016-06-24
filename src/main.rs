@@ -17,6 +17,7 @@ Usage: calc-rust [options] [INPUT]
 
 Options:
     -v, --verbose  Verbose mode
+    -t, --typing   Check types
 ");
 
 fn main() {
@@ -26,10 +27,10 @@ fn main() {
     if args.flag_verbose {
         println!("verbose mode");
     }
-    print!("> ");
-    io::stdout().flush().ok().unwrap();
     let mut s: String = "".to_string();
     if args.arg_INPUT == "".to_string() { // Reads from stdin
+        print!("> ");
+        io::stdout().flush().ok().unwrap();
         match io::stdin().read_line(&mut s) {
             Ok(_) => {}
             Err(err) => { panic!(err); }
@@ -37,11 +38,14 @@ fn main() {
     } else { // Reads from file
         let mut fp = File::open(args.arg_INPUT)
             .unwrap_or_else(|e| panic!(e));
-        fp.read_to_string(&mut s);
+        fp.read_to_string(&mut s)
+            .unwrap_or_else(|e| panic!(e));
     }
     let (fundecs, ast) = parse::parse(&s);
     println!("fundecs: {:?}", fundecs);
     println!("{:?}", ast);
-    println!("typing: {:?}", typing::f(&ast));
-    println!("result = {:?}", interpret::f(&ast));
+    if args.flag_typing {
+        println!("typing: {:?}", typing::f(&ast));
+    }
+    println!("result = {:?}", interpret::f(&fundecs, &ast));
 }

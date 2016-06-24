@@ -35,34 +35,29 @@ $ cargo run
 > 3 * 4 - 5
 fundecs: []
 OpNode(Sub, OpNode(Mul, Num(3), Num(4)), Num(5))
-typing: OpNode(Sub, Int, OpNode(Mul, Int, Num(3), Num(4)), Num(5))
 result = VNum(7)
 $ cargo run
      Running `target/debug/calc-rust`
 > let x = 4 in 3 * x - 5
 fundecs: []
 LetEx("x", Num(4), OpNode(Sub, OpNode(Mul, Num(3), Var("x")), Num(5)))
-typing: LetEx("x", Int, Num(4), OpNode(Sub, Int, OpNode(Mul, Int, Num(3), Var("x", Int)), Num(5)))
 result = VNum(7)
 $ cargo run
      Running `target/debug/calc-rust`
 > let x = 4 in x + "33"
 fundecs: []
 LetEx("x", Num(4), OpNode(Add, Var("x"), Str("33")))
-thread 'main' panicked at 'typing of Add failed', src/typing.rs:20
+thread 'main' panicked at '+ failed', src/interpret.rs:12
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 error: Process didn't exit successfully: `target/debug/calc-rust` (exit code: 101)
 $ cargo run -- sample/add.txt
      Running `target/debug/calc-rust sample/add.txt`
-> fundecs: []
+fundecs: []
 OpNode(Add, OpNode(Add, Num(2), Num(3)), Num(4))
-typing: OpNode(Add, Int, OpNode(Add, Int, Num(2), Num(3)), Num(4))
 result = VNum(9)
 $ cargo run -- sample/fundec.txt
      Running `target/debug/calc-rust sample/fundec.txt`
-> fundecs: [("id", [("x", Int)], Var("x")), ("subtract", [("x", Int), ("y", Int)], OpNode(Sub, Var("x"), Var("y")))]
+fundecs: [("id", [("x", Int)], Var("x")), ("subtract", [("x", Int), ("y", Int)], OpNode(Sub, Var("x"), Var("y")))]
 FunApp("id", [FunApp("subtract", [Num(5), Num(7)])])
-thread 'main' panicked at 'typing_funapp', src/typing.rs:34
-note: Run with `RUST_BACKTRACE=1` for a backtrace.
-error: Process didn't exit successfully: `target/debug/calc-rust sample/fundec.txt` (exit code: 101)
+result = VNum(-2)
 ```
