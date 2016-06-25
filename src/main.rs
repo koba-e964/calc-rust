@@ -45,7 +45,7 @@ fn main() {
     println!("fundecs: {:?}", fundecs);
     println!("{:?}", ast);
     if args.flag_typing {
-        println!("typing: {:?}", typing::f(&ast));
+        println!("typing: {:?}", typing::f(&fundecs, &ast));
     }
     println!("result = {:?}", interpret::f(&fundecs, &ast));
 }

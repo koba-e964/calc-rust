@@ -1,8 +1,8 @@
-def id(x: int) {
+def id(x: int): int {
     x
 }
 
-def subtract(x: int, y: int) {
+def subtract(x: int, y: int): int {
     x - y
 }
 

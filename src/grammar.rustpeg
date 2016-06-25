@@ -8,8 +8,8 @@ fundec_space -> FunDec
         = f:fundec space* { f }
 fundec -> FunDec
         = "def" space+ f:ident space*
-          "(" space* params:params space* ")" space*
-          "{" space* e:exp space* "}" { {let mut t = params; t.reverse(); (f, t, e)} }
+          "(" space* params:params space* ")" space* ":" space* ret_ty:type space*
+          "{" space* e:exp space* "}" { {let mut t = params; t.reverse(); (f, t, ret_ty, e)} }
 params -> Vec<(String, Type)>
         = x:ident space* ":" space* ty:type space* "," space* params:params
           { {let mut t = params; t.push((x, ty)); t} }

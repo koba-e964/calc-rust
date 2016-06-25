@@ -33,7 +33,7 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Value>) -> Val
                 Value::VNum(_) => f_sub(fundecs, e_true, env),
                 _ => panic!("Condition of if has to be an integer."),
             },
-        AST::Var(ref x) => env.get(x).unwrap().clone(),
+        AST::Var(ref x) => env.get(x).expect("variable not found").clone(),
         AST::LetEx(ref x, ref e1, ref e2) => {
             let v1 = f_sub(fundecs, e1, env);
             let old = env.insert(x.clone(), v1);
@@ -62,7 +62,7 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Value>) -> Val
             for i in 0 .. n {
                 cp_env.insert(fundec.1[i].0.clone(), args[i].clone()); // TODO This second cloning is unnecessary. 
             }
-            f_sub(fundecs, &fundec.2, &mut cp_env)
+            f_sub(fundecs, &fundec.3, &mut cp_env)
         },
     }
 }

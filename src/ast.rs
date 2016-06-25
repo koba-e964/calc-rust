@@ -10,7 +10,7 @@ pub enum AST {
     FunApp(String, Vec<AST>),
 }
 
-pub type FunDec = (String, Vec<(String, Type)>, AST);
+pub type FunDec = (String, Vec<(String, Type)>, Type, AST);
 
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum Op {
@@ -43,6 +43,8 @@ pub enum TypedAST {
     LetEx(String, Type, Box<TypedAST>, Box<TypedAST>),
     FunApp(String, Vec<Type>, Type, Vec<TypedAST>), // name, argtype, rettype, arg
 }
+
+pub type TypedFunDec = (String, Vec<(String, Type)>, Type, TypedAST);
 
 pub fn ty_of_ast(tast: &TypedAST) -> Type {
     match *tast {
