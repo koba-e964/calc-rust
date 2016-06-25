@@ -1,6 +1,15 @@
 use ast::{AST, Type, FunDec, TypedAST, TypedFunDec, Op, ty_of_ast};
 use std::collections::HashMap;
 
+fn expect_type(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Type>, expected_type: &Type, msg: &str)
+               -> TypedAST {
+    let tast = f_sub(fundecs, ast, env);
+    if ty_of_ast(&tast) != *expected_type {
+        panic!(format!("type error in expression {:?}: expected: {:?}, but got: {:?}\n{}", ast, expected_type, ty_of_ast(&tast), msg));
+    }
+    tast
+}
+
 fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Type>)
          -> TypedAST {
     match *ast {
@@ -22,15 +31,12 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Type>)
             }
         },
         AST::IfNode(ref cond, ref e_true, ref e_false) => {
-            let tcond = f_sub(fundecs, cond, env);
-            if ty_of_ast(&tcond) != Type::Int {
-                panic!("Condition must be of type int.");
-            }
+            let tcond = expect_type(fundecs, cond, env, &Type::Int,
+                                    "Condition must be of type int.");
+            
             let t_true = f_sub(fundecs, e_true, env);
-            let t_false = f_sub(fundecs, e_false, env);
-            if ty_of_ast(&t_true) != ty_of_ast(&t_false) {
-                panic!("The types of true part and false part in a condition must be the same.");
-            }
+            let t_false = expect_type(fundecs, e_false, env, &ty_of_ast(&t_true),
+                                      "The types of true part and false part in a condition must be the same.");
             TypedAST::IfNode(Box::new(tcond), ty_of_ast(&t_true).clone(), Box::new(t_true), Box::new(t_false))
         },
         AST::LetEx(ref x, ref e1, ref e2) => {
@@ -51,13 +57,7 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Type>)
             if n != m {
                 panic!(format!("The number of arguments of {} is wrong. (expected: {}, got: {})", f.clone(), m, n));
             }
-            let typed_es = es.iter().map(|e| f_sub(fundecs, e, env)).collect::<Vec<_>>();
-            // check argument types
-            for i in 0 .. n {
-                if sign.0[i] != ty_of_ast(&typed_es[i]) {
-                    panic!("argument type differs");
-                }
-            }
+            let typed_es = (0 .. n).map(|i| expect_type(fundecs, &es[i], env, &sign.0[i], "Argument type differs.")).collect::<Vec<_>>();
             TypedAST::FunApp(f.clone(), sign.0, sign.1, typed_es)
         },
     }
@@ -78,13 +78,11 @@ pub fn f(fundecs: &[FunDec], ast: &AST) -> (Vec<TypedFunDec>, TypedAST) {
             let (ref v, ref ty) = *v_ty;
             env.insert(v.clone(), ty.clone());
         }
-        let ty_body = f_sub(fundecs, &fd_body, &mut env);
-        if fd_retty != ty_of_ast(&ty_body) {
-            panic!(format!("return type differs: expected: {:?}, but got: {:?}", fd_retty, ty_of_ast(&ty_body)));
-        }
+        let ty_body = expect_type(fundecs, &fd_body, &mut env, &fd_retty,
+                                  "return type differs");
         tfundecs.push((fd_name, fd_arg, fd_retty, ty_body))
     }
-    (tfundecs, tast) // TODO
+    (tfundecs, tast)
 }
 
 #[cfg(test)]
