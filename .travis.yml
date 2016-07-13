@@ -1,4 +1,7 @@
 language: rust
 rust:
   - nightly
-script: make test
+script:
+  cargo build --verbose
+  cargo test --verbose
+  make test
