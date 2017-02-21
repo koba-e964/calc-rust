@@ -3,11 +3,16 @@ name = "calc"
 version = "0.1.0"
 authors = ["koba-e964 <koba_max@kobas-Air.pohe>"]
 
+[features]
+default = ["docopt_macros"]
+no-docopt-macros = []
+
 [dependencies]
-peg = "0.3.13"
+peg = "0.5"
+peg-syntax-ext = "0.5"
 rustc-serialize = "0.3"
-docopt = "0.6.81"
-docopt_macros = "0.6.84"
+docopt = "0.7"
+docopt_macros = { version = "0.7", optional = true }
 
 [[bin]]
 name = "calc-rust"

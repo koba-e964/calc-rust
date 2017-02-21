@@ -1,5 +1,5 @@
 #![feature(plugin)]
-#![plugin(docopt_macros)]
+#![cfg_attr(not(feature = "no-docopt-macros"),plugin(docopt_macros))]
 
 extern crate calc;
 extern crate rustc_serialize;
@@ -12,6 +12,8 @@ use calc::parse;
 use calc::interpret;
 use calc::typing;
 
+// if feature = no-docopt-macros, this will not depend on docopt_macros.
+#[cfg(not(feature = "no-docopt-macros"))]
 docopt!(Args, "
 Usage: calc-rust [options] [INPUT]
 
@@ -19,11 +21,30 @@ Options:
     -v, --verbose  Verbose mode
     -t, --typing   Check types
 ");
+#[cfg(feature = "no-docopt-macros")]
+#[allow(non_snake_case)]
+struct Args {
+    flag_verbose: bool,
+    flag_typing: bool,
+    arg_INPUT: String, // needs allow(non_snake_case) because of this line
+}
+
+#[cfg(not(feature = "no-docopt-macros"))]
+fn get_args() -> Args {
+    Args::docopt()
+        .decode()
+        .unwrap_or_else(|e| e.exit())
+}
+#[cfg(feature = "no-docopt-macros")]
+fn get_args() -> Args {
+    Args { flag_verbose: false,
+           flag_typing: false,
+           arg_INPUT: "".to_string() }
+}
+
 
 fn main() {
-    let args: Args = Args::docopt()
-        .decode()
-        .unwrap_or_else(|e| e.exit());
+    let args: Args = get_args();
     if args.flag_verbose {
         println!("verbose mode");
     }

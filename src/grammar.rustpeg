@@ -47,18 +47,18 @@ atom -> AST
         / v:ident { AST::Var(v) }
 	/ "(" space* v:exp space* ")" { v }
 number -> AST
-	= [0-9]+ { AST::Num(match_str.parse().unwrap()) }
+	= mstr:$([0-9]+) { AST::Num(mstr.parse().unwrap()) }
 args -> Vec<AST>
         = e:exp space* "," space* a:args { {let mut t = a; t.push(e); t} }
         / e:exp { vec![e] }
 str -> AST
         = "\"" s:str_internal "\"" { AST::Str(s) }
 str_internal -> String
-        = [^\"]* { match_str.to_string() }
+        = mstr:$([^\"]*) { mstr.to_string() }
 space -> ()
         = " " / "\n" / "\r"
 ident -> String
-        = !keyword [a-zA-Z]+ { match_str.to_string() }
+        = !keyword mstr:$([a-zA-Z]+) { mstr.to_string() }
 type -> Type
         = "int" { Type::Int }
 	/ "str" { Type::Str }
