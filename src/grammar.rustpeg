@@ -1,5 +1,4 @@
 use ast::*;
-use parse::*;
 
 #[pub]
 top_exp -> (Vec<FunDec>, AST)
