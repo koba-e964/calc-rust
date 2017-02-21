@@ -38,7 +38,7 @@ fn get_args() -> Args {
 #[cfg(feature = "no-docopt-macros")]
 fn get_args() -> Args {
     Args { flag_verbose: false,
-           flag_typing: false,
+           flag_typing: true,
            arg_INPUT: "".to_string() }
 }
 
@@ -49,7 +49,7 @@ fn main() {
         println!("verbose mode");
     }
     let mut s: String = "".to_string();
-    if args.arg_INPUT == "".to_string() { // Reads from stdin
+    if args.arg_INPUT == "" { // Reads from stdin
         print!("> ");
         io::stdout().flush().ok().unwrap();
         match io::stdin().read_line(&mut s) {
