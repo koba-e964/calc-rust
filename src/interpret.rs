@@ -47,9 +47,9 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Value>) -> Val
         AST::FunApp(ref f, ref es) => {
             // evaluate arguments from left to right
             let n = es.len();
-            let mut args = vec![Value::VNum(0); n];
-            for i in 0 .. n {
-                args[i] = f_sub(fundecs, &es[i], env);
+            let mut args = Vec::new();
+            for e in es.iter() {
+                args.push(f_sub(fundecs, e, env));
             }
             let mut cp_env = env.clone();
             let fundec = fundecs.iter()
@@ -59,8 +59,8 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Value>) -> Val
             if n != m {
                 panic!("The number of parameters does not match the number of arguments.");
             }
-            for i in 0 .. n {
-                cp_env.insert(fundec.1[i].0.clone(), args[i].clone()); // TODO This second cloning is unnecessary. 
+            for i in (0 .. n).rev() {
+                cp_env.insert(fundec.1[i].0.clone(), args.remove(i));
             }
             f_sub(fundecs, &fundec.3, &mut cp_env)
         },
