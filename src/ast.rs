@@ -10,7 +10,8 @@ pub enum AST {
     FunApp(String, Vec<AST>),
 }
 
-pub type FunDec = (String, Vec<(String, Type)>, Type, AST);
+#[derive(Clone, Debug)]
+pub struct FunDec(pub String, pub Vec<(String, Type)>, pub Type, pub AST);
 
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum Op {

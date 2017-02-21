@@ -72,7 +72,7 @@ pub fn f(fundecs: &[FunDec], ast: &AST) -> (Vec<TypedFunDec>, TypedAST) {
     let tast = f_sub(fundecs, ast, &mut HashMap::new());
     let mut tfundecs: Vec<TypedFunDec> = Vec::new();
     for i in 0 .. fundecs.len() {
-        let (fd_name, fd_arg, fd_retty, fd_body) = fundecs[i].clone();
+        let FunDec(fd_name, fd_arg, fd_retty, fd_body) = fundecs[i].clone();
         let mut env = HashMap::new();
         for v_ty in &fd_arg {
             let (ref v, ref ty) = *v_ty;

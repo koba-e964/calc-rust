@@ -8,7 +8,7 @@ fn f_sub(fundecs: &[FunDec], ast: &AST, env: &mut HashMap<String, Value>) -> Val
         AST::OpNode(Op::Add, ref e1, ref e2) =>
             match (f_sub(fundecs, e1, env), f_sub(fundecs, e2, env)) {
                 (Value::VNum(i1), Value::VNum(i2)) => Value::VNum(i1 + i2),
-                (Value::VStr(s1), Value::VStr(s2)) => { let mut s = s1.to_string(); s.push_str(&s2); Value::VStr(s)},
+                (Value::VStr(s1), Value::VStr(s2)) => { let mut s = s1; s.push_str(&s2); Value::VStr(s)},
                 _ => panic!("+ failed"),
             },
         AST::OpNode(Op::Sub, ref e1, ref e2) =>
