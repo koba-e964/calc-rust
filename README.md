@@ -1,4 +1,4 @@
-# CalcRust [![Build Status](https://travis-ci.org/koba-e964/calc-rust.svg?branch=master)](https://travis-ci.org/koba-e964/calc-rust)
+# CalcRust [![Build Status](https://github.com/koba-e964/calc-rust/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/koba-e964/calc-rust/actions/workflows/rust.yml?query=branch%3Amaster)
 
 
 This is a toy example of a calculator in Rust, using [`rust-peg`](https://github.com/kevinmehall/rust-peg).
