@@ -14,7 +14,7 @@ struct Args {
 
 fn get_args() -> Args {
     let matches = Command::new("calc-rust")
-        .version("1.0")
+        .version("0.1.0")
         .author("koba-e964 <3303362+koba-e964@users.noreply.github.com>")
         .about("A calculator written in Rust")
         .arg(
