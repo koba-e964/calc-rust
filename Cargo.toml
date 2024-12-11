@@ -1,18 +1,13 @@
 [package]
 name = "calc"
 version = "0.1.0"
-authors = ["koba-e964 <koba_max@kobas-Air.pohe>"]
-
-[features]
-default = ["docopt_macros"]
-no-docopt-macros = []
+authors = ["koba-e964 <3303362+koba-e964@users.noreply.github.com>"]
+publish = false
+edition = "2021"
 
 [dependencies]
-peg = "0.5"
-peg-syntax-ext = "0.5"
-rustc-serialize = "0.3"
-docopt = "0.7"
-docopt_macros = { version = "0.7", optional = true }
+peg = "0.8"
+clap = "4"
 
 [[bin]]
 name = "calc-rust"

@@ -1,47 +1,52 @@
-#![feature(plugin)]
-#![cfg_attr(not(feature = "no-docopt-macros"),plugin(docopt_macros))]
-
-extern crate calc;
-extern crate rustc_serialize;
-extern crate docopt;
-
-use std::io;
-use std::io::{Read,Write};
-use std::fs::File;
-use calc::parse;
 use calc::interpret;
+use calc::parse;
 use calc::typing;
+use clap::{Arg, Command};
+use std::fs::File;
+use std::io;
+use std::io::{Read, Write};
 
-// if feature = no-docopt-macros, this will not depend on docopt_macros.
-#[cfg(not(feature = "no-docopt-macros"))]
-docopt!(Args, "
-Usage: calc-rust [options] [INPUT]
-
-Options:
-    -v, --verbose  Verbose mode
-    -t, --typing   Check types
-");
-#[cfg(feature = "no-docopt-macros")]
-#[allow(non_snake_case)]
 struct Args {
     flag_verbose: bool,
     flag_typing: bool,
-    arg_INPUT: String, // needs allow(non_snake_case) because of this line
+    arg_input: String,
 }
 
-#[cfg(not(feature = "no-docopt-macros"))]
 fn get_args() -> Args {
-    Args::docopt()
-        .decode()
-        .unwrap_or_else(|e| e.exit())
-}
-#[cfg(feature = "no-docopt-macros")]
-fn get_args() -> Args {
-    Args { flag_verbose: false,
-           flag_typing: true,
-           arg_INPUT: "".to_string() }
-}
+    let matches = Command::new("calc-rust")
+        .version("1.0")
+        .author("koba-e964 <3303362+koba-e964@users.noreply.github.com>")
+        .about("A calculator written in Rust")
+        .arg(
+            Arg::new("INPUT")
+                .help("Input file")
+                .required(false)
+                .index(1)
+                .value_name("INPUT"),
+        )
+        .arg(
+            Arg::new("verbose")
+                .short('v')
+                .long("verbose")
+                .help("Verbose mode"),
+        )
+        .arg(
+            Arg::new("typing")
+                .short('t')
+                .long("typing")
+                .help("Check types"),
+        )
+        .get_matches();
 
+    Args {
+        flag_verbose: matches.contains_id("verbose"),
+        flag_typing: matches.contains_id("typing"),
+        arg_input: matches
+            .get_one::<String>("INPUT")
+            .unwrap_or(&"".to_string())
+            .to_string(),
+    }
+}
 
 fn main() {
     let args: Args = get_args();
@@ -49,18 +54,20 @@ fn main() {
         println!("verbose mode");
     }
     let mut s: String = "".to_string();
-    if args.arg_INPUT == "" { // Reads from stdin
+    if args.arg_input.is_empty() {
+        // Reads from stdin
         print!("> ");
         io::stdout().flush().ok().unwrap();
         match io::stdin().read_line(&mut s) {
             Ok(_) => {}
-            Err(err) => { panic!(err); }
+            Err(err) => {
+                panic!("{err}");
+            }
         }
-    } else { // Reads from file
-        let mut fp = File::open(args.arg_INPUT)
-            .unwrap_or_else(|e| panic!(e));
-        fp.read_to_string(&mut s)
-            .unwrap_or_else(|e| panic!(e));
+    } else {
+        // Reads from file
+        let mut fp = File::open(args.arg_input).unwrap_or_else(|e| panic!("{e}"));
+        fp.read_to_string(&mut s).unwrap_or_else(|e| panic!("{e}"));
     }
     let (fundecs, ast) = parse::parse(&s);
     println!("fundecs: {:?}", fundecs);
